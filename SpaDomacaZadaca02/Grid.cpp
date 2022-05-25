@@ -1,11 +1,13 @@
 #include "Grid.h"
 #include <iostream>
+#include "MouseHandler.h"
 
 using namespace std;
 
-Grid::Grid(sf::RenderWindow* window, int width, int height)
+Grid::Grid(sf::RenderWindow* window, MouseHandler* mouse, int width, int height)
 {
     this->window = window;
+    this->mouse = mouse;
     this->width = width;
     this->height = height;
 
@@ -75,6 +77,27 @@ void Grid::transferNewCells()
     }
 }
 
+void Grid::checkUserInput()
+{
+    if (!mouse->isAnyButtonPressed()) return;
+
+    int mx = mouse->getX();
+    int my = mouse->getY();
+
+    // Getting the cell x and y
+    int cellX = mx >> CELL_FACTOR;
+    int cellY = my >> CELL_FACTOR;
+
+    if (mouse->isLeftPressed()) {
+        setCell(cellX, cellY, true);
+        setCopiedCell(cellX, cellY, true);
+    }
+    else if (mouse->isRightPressed()) {
+        setCell(cellX, cellY, false);
+        setCopiedCell(cellX, cellY, false);
+    }
+}
+
 // Creates the cell in the copy array before updating the entire grid
 void Grid::setCell(int x, int y, bool state)
 {
@@ -102,6 +125,8 @@ bool Grid::getCopiedCell(int x, int y)
 
 void Grid::tick()
 {
+    checkUserInput();
+
     sf::Time elapsed = timer.getElapsedTime();
 
     // Check if the correct time has passed

@@ -13,7 +13,7 @@ const int MAX_FPS = 60;
 
 // Grid dimensions (in number of cells)
 const int GRID_WIDTH = 24;
-const int GRID_HEIGHT = 16;
+const int GRID_HEIGHT = 20;
 
 // Window title
 const string TITLE = "Game of Life";
@@ -28,8 +28,8 @@ int main()
 	sf::Clock deltaClock; // Delta time used for normalizing animations
 	sf::Time dt = deltaClock.restart(); // (making sure it's consistent at every framerate)
 
-	Grid grid(&window, GRID_WIDTH, GRID_HEIGHT); // Creating the grid
-	MouseHandler mouse(&window, &grid); // User mouse input
+	MouseHandler mouse(&window); // User mouse input
+	Grid grid(&window, &mouse, GRID_WIDTH, GRID_HEIGHT); // Creating the grid
 
 	while (window.isOpen())
 	{

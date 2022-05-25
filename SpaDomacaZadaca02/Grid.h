@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "MouseHandler.h"
 
 class Grid
 {
@@ -8,6 +9,7 @@ private:
 	bool* cells; // Array of cells
 	bool* cellsCopy; // Copy of the original cells
 	sf::RenderWindow* window; // Main window
+	MouseHandler* mouse; // User's mouse
 	int generationCount = 0; // Current generation of cells
 
 	sf::RectangleShape cellShape; // The cell which we render
@@ -19,12 +21,13 @@ private:
 	void renderGridOutline();
 	int getNeighborCount(int x, int y);
 	void transferNewCells();
+	void checkUserInput();
 public:
 	// Grid constants
 	static const int CELL_SIZE = 32; // Cell size
 	static const int CELL_FACTOR = 5; // Used for faster calculations (2^5)
 
-	Grid(sf::RenderWindow* window, int width, int height);
+	Grid(sf::RenderWindow* window, MouseHandler* mouse, int width, int height);
 	void setCell(int x, int y, bool state);
 	bool getCell(int x, int y);
 	void setCopiedCell(int x, int y, bool state);

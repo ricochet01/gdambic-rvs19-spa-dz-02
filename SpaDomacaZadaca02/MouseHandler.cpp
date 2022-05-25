@@ -1,39 +1,41 @@
 #include "MouseHandler.h"
-#include "Grid.h"
 #include <SFML/Graphics.hpp>
 
-MouseHandler::MouseHandler(sf::RenderWindow* window, Grid* grid)
+MouseHandler::MouseHandler(sf::RenderWindow* window)
 {
 	this->window = window;
-	this->grid = grid;
 
+	// Default values
 	this->x = 0;
 	this->y = 0;
+	this->left = false;
+	this->right = false;
 }
 
 void MouseHandler::tick()
 {
-	bool left = sf::Mouse::isButtonPressed(sf::Mouse::Left);
-	bool right = sf::Mouse::isButtonPressed(sf::Mouse::Right);
-
-	if (!(left || right)) return;
-
 	sf::Vector2i mousePosition = sf::Mouse::getPosition(*window); // Mouse position relative to the window
 	// The x and y coordinates of the mouse
 	this->x = mousePosition.x;
 	this->y = mousePosition.y;
 
-	// Getting the cell x and y
-	int cellX = x >> Grid::CELL_FACTOR;
-	int cellY = y >> Grid::CELL_FACTOR;
+	this->left = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+	this->right = sf::Mouse::isButtonPressed(sf::Mouse::Right);
+}
 
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-		grid->setCell(cellX, cellY, true);
-		grid->setCopiedCell(cellX, cellY, true);
-	} else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-		grid->setCell(cellX, cellY, false);
-		grid->setCopiedCell(cellX, cellY, false);
-	}
+bool MouseHandler::isLeftPressed()
+{
+	return left;
+}
+
+bool MouseHandler::isRightPressed()
+{
+	return right;
+}
+
+bool MouseHandler::isAnyButtonPressed()
+{
+	return left || right;
 }
 
 int MouseHandler::getX()
