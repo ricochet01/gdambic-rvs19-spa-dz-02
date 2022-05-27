@@ -21,6 +21,8 @@ void MouseHandler::tick()
 
 	this->left = sf::Mouse::isButtonPressed(sf::Mouse::Left);
 	this->right = sf::Mouse::isButtonPressed(sf::Mouse::Right);
+
+	this->leftClick = false;
 }
 
 bool MouseHandler::isLeftPressed()
@@ -36,6 +38,16 @@ bool MouseHandler::isRightPressed()
 bool MouseHandler::isAnyButtonPressed()
 {
 	return left || right;
+}
+
+bool MouseHandler::isLeftClicked()
+{
+	return leftClick;
+}
+
+void MouseHandler::setLeftClick(bool state)
+{
+	this->leftClick = state;
 }
 
 int MouseHandler::getX()

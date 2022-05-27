@@ -24,6 +24,12 @@
     <ClCompile Include="MouseHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="btn\TextButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="btn\SpriteButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Grid.h">
@@ -32,9 +38,18 @@
     <ClInclude Include="MouseHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="btn\TextButton.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="btn\SpriteButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Font Include="font\Consolas.ttf">
+      <Filter>Source Files</Filter>
+    </Font>
+    <Font Include="font\consolaz.ttf">
       <Filter>Source Files</Filter>
     </Font>
   </ItemGroup>

@@ -1,8 +1,11 @@
-#include <iostream>
+﻿#include <iostream>
 #include <string>
 #include <SFML/Graphics.hpp>
+
 #include "Grid.h"
 #include "MouseHandler.h"
+#include "btn/TextButton.h"
+#include "btn/SpriteButton.h"
 
 using namespace std;
 
@@ -28,8 +31,18 @@ int main()
 	sf::Clock deltaClock; // Delta time used for normalizing animations
 	sf::Time dt = deltaClock.restart(); // (making sure it's consistent at every framerate)
 
+	sf::Font font; // Font
+	if (!font.loadFromFile("font/consolaz.ttf")) {
+		cout << "Error while opening font!" << endl;
+	}
+
 	MouseHandler mouse(&window); // User mouse input
 	Grid grid(&window, &mouse, GRID_WIDTH, GRID_HEIGHT); // Creating the grid
+
+	TextButton btn(&window, &font, "Hello world!", WIDTH - 224, 32);
+	SpriteButton pause(&window, "gfx/pause.png", WIDTH - 200, 80);
+	SpriteButton resume(&window, "gfx/resume.png", WIDTH - 200, 80);
+
 
 	while (window.isOpen())
 	{
@@ -40,9 +53,16 @@ int main()
 			case sf::Event::Closed:
 				window.close();
 				break;
+			case sf::Event::MouseButtonReleased:
+				// Left click only counts when we release the left mouse button
+				if (event.mouseButton.button == sf::Mouse::Left) {
+					mouse.setLeftClick(true);
+				}
+				break;
 			}
 		}
 
+		// Refreshing the window
 		window.clear();
 
 		// Updating the grid
@@ -50,9 +70,21 @@ int main()
 		// Drawing the grid
 		grid.render();
 
+		// Drawing the button
+		btn.render();
+		pause.render();
+
+		if (btn.hasPressed(&mouse)) {
+			cout << "pressed button" << endl;
+		}
+		if (pause.hasPressed(&mouse)) {
+			cout << "pressed pause!" << endl;
+		}
+
 		// Updating the mouse state; checking for user input
 		mouse.tick();
 
+		// Showing the graphics
 		window.display();
 
 		dt = deltaClock.restart();
