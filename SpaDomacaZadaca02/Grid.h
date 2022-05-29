@@ -10,11 +10,13 @@ private:
 	bool* cellsCopy; // Copy of the original cells
 	sf::RenderWindow* window; // Main window
 	MouseHandler* mouse; // User's mouse
+
 	int generationCount = 0; // Current generation of cells
+	bool paused = false; // Is the execution paused
 
 	sf::RectangleShape cellShape; // The cell which we render
 	sf::Clock timer; // Timer which determines when we update every cell
-	float updateInvervalMs; // How much time is needed to pass to update the grid (in ms)
+	int updateInvervalMs; // How much time is needed to pass to update the grid (in ms)
 
 	// Private methods
 	void init();
@@ -30,8 +32,18 @@ public:
 	Grid(sf::RenderWindow* window, MouseHandler* mouse, int width, int height);
 	void setCell(int x, int y, bool state);
 	bool getCell(int x, int y);
+
 	void setCopiedCell(int x, int y, bool state);
 	bool getCopiedCell(int x, int y);
+
+	void setUpdateInterval(int ms);
+	int getUpdateInterval();
+
+	void toggle(bool paused);
+	bool isPaused();
+
+	int getGeneration();
+
 	void tick();
 	void render();
 };

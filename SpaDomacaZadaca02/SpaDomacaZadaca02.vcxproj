@@ -121,6 +121,7 @@
   <ItemGroup>
     <ClCompile Include="btn\TextButton.cpp" />
     <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="ui\Label.cpp" />
     <ClCompile Include="MouseHandler.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="btn\SpriteButton.cpp" />
@@ -128,6 +129,7 @@
   <ItemGroup>
     <ClInclude Include="btn\TextButton.h" />
     <ClInclude Include="Grid.h" />
+    <ClInclude Include="ui\Label.h" />
     <ClInclude Include="MouseHandler.h" />
     <ClInclude Include="btn\SpriteButton.h" />
   </ItemGroup>

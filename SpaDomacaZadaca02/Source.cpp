@@ -6,6 +6,7 @@
 #include "MouseHandler.h"
 #include "btn/TextButton.h"
 #include "btn/SpriteButton.h"
+#include "ui/Label.h"
 
 using namespace std;
 
@@ -23,6 +24,15 @@ const string TITLE = "Game of Life";
 // Disables resizing and adds a titlebar
 const int WINDOW_SETTINGS = sf::Style::Titlebar | sf::Style::Close;
 
+const short NUMBER_OF_INTERVALS = 5;
+const int INTERVAL_UPDATES[NUMBER_OF_INTERVALS] = {100, 250, 500, 1000, 2000};
+
+void setInterval(Label& intervalLabel, int index, Grid& grid) {
+	int interval = INTERVAL_UPDATES[index];
+	intervalLabel.setText("Update: " + to_string(interval) + " ms");
+	grid.setUpdateInterval(interval);
+}
+
 int main()
 {
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), TITLE, WINDOW_SETTINGS);
@@ -32,17 +42,30 @@ int main()
 	sf::Time dt = deltaClock.restart(); // (making sure it's consistent at every framerate)
 
 	sf::Font font; // Font
-	if (!font.loadFromFile("font/consolaz.ttf")) {
+	if (!font.loadFromFile("font/consolaz.ttf")) { // Loading the font from the file
 		cout << "Error while opening font!" << endl;
+		return 1;
 	}
 
 	MouseHandler mouse(&window); // User mouse input
 	Grid grid(&window, &mouse, GRID_WIDTH, GRID_HEIGHT); // Creating the grid
 
-	TextButton btn(&window, &font, "Hello world!", WIDTH - 224, 32);
-	SpriteButton pause(&window, "gfx/pause.png", WIDTH - 200, 80);
-	SpriteButton resume(&window, "gfx/resume.png", WIDTH - 200, 80);
+	// Buttons to control the flow
+	SpriteButton pause(&window, "gfx/pause.png", WIDTH - 147, 80);
+	SpriteButton resume(&window, "gfx/resume.png", WIDTH - 147, 80);
+	SpriteButton timeForwards(&window, "gfx/advance-forward.png", WIDTH - 100, 80);
+	SpriteButton timeBackwards(&window, "gfx/advance-backwards.png", WIDTH - 195, 80);
 
+	int updateIntervalIndex = NUMBER_OF_INTERVALS - 1;
+	int previousGeneration = grid.getGeneration();
+
+	// Displays for important info
+	Label mainLabel(&window, &font, "Controls:", WIDTH - 195, 32);
+	Label genLabel(&window, &font, "Generation: " + to_string(grid.getGeneration()), WIDTH - 250, 135);
+	Label intervalLabel(&window, &font, "Update: " + to_string(INTERVAL_UPDATES[updateIntervalIndex]) + " ms",
+		WIDTH - 250, 165);
+
+	setInterval(intervalLabel, updateIntervalIndex, grid);
 
 	while (window.isOpen())
 	{
@@ -70,16 +93,43 @@ int main()
 		// Drawing the grid
 		grid.render();
 
-		// Drawing the button
-		btn.render();
-		pause.render();
+		// Drawing the buttons
+		SpriteButton* executionBtn = grid.isPaused() ? &resume : &pause; // Which button to use
+		executionBtn->render();
 
-		if (btn.hasPressed(&mouse)) {
-			cout << "pressed button" << endl;
+		timeForwards.render();
+		timeBackwards.render();
+
+		if (executionBtn->hasPressed(&mouse)) {
+			grid.toggle(!grid.isPaused());
 		}
-		if (pause.hasPressed(&mouse)) {
-			cout << "pressed pause!" << endl;
+
+		// Time execution delay increase
+		if (timeForwards.hasPressed(&mouse)) {
+			if (updateIntervalIndex < NUMBER_OF_INTERVALS - 1) {
+				updateIntervalIndex++;
+				setInterval(intervalLabel, updateIntervalIndex, grid);
+			}
 		}
+
+		// Time execution delay decrease
+		if (timeBackwards.hasPressed(&mouse)) {
+			if (updateIntervalIndex > 0) {
+				updateIntervalIndex--;
+				setInterval(intervalLabel, updateIntervalIndex, grid);
+			}
+		}
+
+		// Updating the generation display label
+		if (previousGeneration != grid.getGeneration()) {
+			previousGeneration = grid.getGeneration();
+			genLabel.setText("Generation: " + to_string(previousGeneration));
+		}
+
+		// Drawing the text labels
+		mainLabel.render();
+		genLabel.render();
+		intervalLabel.render();
 
 		// Updating the mouse state; checking for user input
 		mouse.tick();

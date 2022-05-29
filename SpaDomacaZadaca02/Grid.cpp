@@ -31,7 +31,7 @@ void Grid::init()
         cellsCopy[i] = false;
     }
 
-    this->updateInvervalMs = 2000.f; // (n / 1000) seconds
+    this->updateInvervalMs = 500; // (n / 1000) seconds
 }
 
 void Grid::renderGridOutline()
@@ -123,6 +123,31 @@ bool Grid::getCopiedCell(int x, int y)
     return cellsCopy[x + y * width];
 }
 
+void Grid::setUpdateInterval(int ms)
+{
+    this->updateInvervalMs = ms;
+}
+
+int Grid::getUpdateInterval()
+{
+    return updateInvervalMs;
+}
+
+void Grid::toggle(bool paused)
+{
+    this->paused = paused;
+}
+
+bool Grid::isPaused()
+{
+    return paused;
+}
+
+int Grid::getGeneration()
+{
+    return generationCount;
+}
+
 void Grid::tick()
 {
     checkUserInput();
@@ -130,7 +155,7 @@ void Grid::tick()
     sf::Time elapsed = timer.getElapsedTime();
 
     // Check if the correct time has passed
-    if (elapsed.asMilliseconds() >= updateInvervalMs) { // Update the cells
+    if (elapsed.asMilliseconds() >= updateInvervalMs && !paused) { // Update the cells
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 bool cell = getCell(x, y);
