@@ -38,18 +38,18 @@ void Grid::renderGridOutline()
 {
     sf::RectangleShape line;
     line.setFillColor(sf::Color(128, 128, 128, 255));
-    line.setSize(sf::Vector2f(width << CELL_FACTOR, 1));
+    line.setSize(sf::Vector2f(width * CELL_SIZE, 1));
 
     for (int y = 0; y <= height; y++) {
-        line.setPosition(sf::Vector2f(0, y << CELL_FACTOR));
+        line.setPosition(sf::Vector2f(0, y * CELL_SIZE));
 
         window->draw(line);
     }
 
-    line.setSize(sf::Vector2f(1, height << CELL_FACTOR));
+    line.setSize(sf::Vector2f(1, height * CELL_SIZE));
 
     for (int x = 0; x <= width; x++) {
-        line.setPosition(sf::Vector2f(x << CELL_FACTOR, 0));
+        line.setPosition(sf::Vector2f(x * CELL_SIZE, 0));
 
         window->draw(line);
     }
@@ -85,8 +85,8 @@ void Grid::checkUserInput()
     int my = mouse->getY();
 
     // Getting the cell x and y
-    int cellX = mx >> CELL_FACTOR;
-    int cellY = my >> CELL_FACTOR;
+    int cellX = mx / CELL_SIZE;
+    int cellY = my / CELL_SIZE;
 
     if (mouse->isLeftPressed()) {
         setCell(cellX, cellY, true);
@@ -143,7 +143,7 @@ bool Grid::isPaused()
     return paused;
 }
 
-int Grid::getGeneration()
+unsigned Grid::getGeneration()
 {
     return generationCount;
 }
@@ -189,7 +189,7 @@ void Grid::render()
             bool cell = getCopiedCell(x, y);
 
             if (cell) { // Draw the cell if it's alive
-                cellShape.setPosition(sf::Vector2f(x << CELL_FACTOR, y << CELL_FACTOR));
+                cellShape.setPosition(sf::Vector2f(x * CELL_SIZE, y * CELL_SIZE));
                 window->draw(cellShape);
             } // Otherwise, it will just be a black cell
         }

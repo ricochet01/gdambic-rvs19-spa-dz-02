@@ -11,7 +11,7 @@ private:
 	sf::RenderWindow* window; // Main window
 	MouseHandler* mouse; // User's mouse
 
-	int generationCount = 0; // Current generation of cells
+	unsigned generationCount = 0; // Current generation of cells
 	bool paused = false; // Is the execution paused
 
 	sf::RectangleShape cellShape; // The cell which we render
@@ -26,8 +26,7 @@ private:
 	void checkUserInput();
 public:
 	// Grid constants
-	static const int CELL_SIZE = 32; // Cell size
-	static const int CELL_FACTOR = 5; // Used for faster calculations (2^5)
+	static const int CELL_SIZE = 24; // Cell size
 
 	Grid(sf::RenderWindow* window, MouseHandler* mouse, int width, int height);
 	void setCell(int x, int y, bool state);
@@ -42,7 +41,7 @@ public:
 	void toggle(bool paused);
 	bool isPaused();
 
-	int getGeneration();
+	unsigned getGeneration();
 
 	void tick();
 	void render();

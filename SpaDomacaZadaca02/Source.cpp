@@ -16,8 +16,8 @@ const int HEIGHT = 768;
 const int MAX_FPS = 60;
 
 // Grid dimensions (in number of cells)
-const int GRID_WIDTH = 24;
-const int GRID_HEIGHT = 20;
+const int GRID_WIDTH = 32;
+const int GRID_HEIGHT = 30;
 
 // Window title
 const string TITLE = "Game of Life";
@@ -57,13 +57,14 @@ int main()
 	SpriteButton timeBackwards(&window, "gfx/advance-backwards.png", WIDTH - 195, 80);
 
 	int updateIntervalIndex = NUMBER_OF_INTERVALS - 1;
-	int previousGeneration = grid.getGeneration();
+	unsigned previousGeneration = grid.getGeneration();
 
 	// Displays for important info
 	Label mainLabel(&window, &font, "Controls:", WIDTH - 195, 32);
 	Label genLabel(&window, &font, "Generation: " + to_string(grid.getGeneration()), WIDTH - 250, 135);
 	Label intervalLabel(&window, &font, "Update: " + to_string(INTERVAL_UPDATES[updateIntervalIndex]) + " ms",
 		WIDTH - 250, 165);
+	Label ctrlLabel(&window, &font, "Left click to make\na cell alive,\nright click to\nkill it.", WIDTH - 250, 240);
 
 	setInterval(intervalLabel, updateIntervalIndex, grid);
 
@@ -130,6 +131,7 @@ int main()
 		mainLabel.render();
 		genLabel.render();
 		intervalLabel.render();
+		ctrlLabel.render();
 
 		// Updating the mouse state; checking for user input
 		mouse.tick();
