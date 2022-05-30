@@ -43,6 +43,7 @@ public:
 
 	unsigned getGeneration();
 
+	void reset();
 	void tick();
 	void render();
 };

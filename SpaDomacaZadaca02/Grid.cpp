@@ -23,13 +23,8 @@ void Grid::init()
     // Creating a cell shape object
     this->cellShape = sf::RectangleShape(sf::Vector2f(CELL_SIZE, CELL_SIZE));
     cellShape.setFillColor(sf::Color::White);
-    
-    // Setting the default values of the array to be false
-    int len = width * height; // Cell array length
-    for (int i = 0; i < len; i++) {
-        cells[i] = false;
-        cellsCopy[i] = false;
-    }
+
+    reset();
 
     this->updateInvervalMs = 500; // (n / 1000) seconds
 }
@@ -146,6 +141,18 @@ bool Grid::isPaused()
 unsigned Grid::getGeneration()
 {
     return generationCount;
+}
+
+void Grid::reset()
+{
+    this->generationCount = 0;
+
+    // Setting the default values of the array to be false
+    int len = width * height; // Cell array length
+    for (int i = 0; i < len; i++) {
+        cells[i] = false;
+        cellsCopy[i] = false;
+    }
 }
 
 void Grid::tick()

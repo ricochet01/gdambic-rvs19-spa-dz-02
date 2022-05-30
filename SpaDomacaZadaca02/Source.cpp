@@ -51,10 +51,12 @@ int main()
 	Grid grid(&window, &mouse, GRID_WIDTH, GRID_HEIGHT); // Creating the grid
 
 	// Buttons to control the flow
-	SpriteButton pause(&window, "gfx/pause.png", WIDTH - 147, 80);
-	SpriteButton resume(&window, "gfx/resume.png", WIDTH - 147, 80);
-	SpriteButton timeForwards(&window, "gfx/advance-forward.png", WIDTH - 100, 80);
-	SpriteButton timeBackwards(&window, "gfx/advance-backwards.png", WIDTH - 195, 80);
+	SpriteButton pause(&window, "gfx/pause.png", WIDTH - 168, 80);
+	SpriteButton resume(&window, "gfx/resume.png", WIDTH - 168, 80);
+	SpriteButton resetGrid(&window, "gfx/reset1.png", WIDTH - 128, 80);
+
+	SpriteButton timeForwards(&window, "gfx/advance-forward.png", WIDTH - 85, 80);
+	SpriteButton timeBackwards(&window, "gfx/advance-backwards.png", WIDTH - 210, 80);
 
 	int updateIntervalIndex = NUMBER_OF_INTERVALS - 1;
 	unsigned previousGeneration = grid.getGeneration();
@@ -83,6 +85,9 @@ int main()
 					mouse.setLeftClick(true);
 				}
 				break;
+			case sf::Event::LostFocus:
+				grid.toggle(true);
+				break;
 			}
 		}
 
@@ -100,7 +105,9 @@ int main()
 
 		timeForwards.render();
 		timeBackwards.render();
+		resetGrid.render();
 
+		/* Button press checks */
 		if (executionBtn->hasPressed(&mouse)) {
 			grid.toggle(!grid.isPaused());
 		}
@@ -119,6 +126,10 @@ int main()
 				updateIntervalIndex--;
 				setInterval(intervalLabel, updateIntervalIndex, grid);
 			}
+		}
+
+		if (resetGrid.hasPressed(&mouse)) {
+			grid.reset();
 		}
 
 		// Updating the generation display label
