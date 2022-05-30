@@ -22,7 +22,9 @@ void MouseHandler::tick()
 	this->left = sf::Mouse::isButtonPressed(sf::Mouse::Left);
 	this->right = sf::Mouse::isButtonPressed(sf::Mouse::Right);
 
+	// Resetting the mouse clicks at the end of every frame
 	this->leftClick = false;
+	this->rightClick = false;
 }
 
 bool MouseHandler::isLeftPressed()
@@ -48,6 +50,16 @@ bool MouseHandler::isLeftClicked()
 void MouseHandler::setLeftClick(bool state)
 {
 	this->leftClick = state;
+}
+
+bool MouseHandler::isRightClicked()
+{
+	return rightClick;
+}
+
+void MouseHandler::setRightClick(bool state)
+{
+	this->rightClick = state;
 }
 
 int MouseHandler::getX()

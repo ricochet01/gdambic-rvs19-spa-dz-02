@@ -19,6 +19,9 @@ public:
 	bool isLeftClicked();
 	void setLeftClick(bool state);
 
+	bool isRightClicked();
+	void setRightClick(bool state);
+
 	int getX();
 	int getY();
 };

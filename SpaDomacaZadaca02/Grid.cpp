@@ -1,15 +1,18 @@
 #include "Grid.h"
 #include <iostream>
 #include "MouseHandler.h"
+#include "WindowUtils.h"
 
 using namespace std;
 
-Grid::Grid(sf::RenderWindow* window, MouseHandler* mouse, int width, int height)
+Grid::Grid(sf::RenderWindow* window, MouseHandler* mouse)
 {
     this->window = window;
     this->mouse = mouse;
-    this->width = width;
-    this->height = height;
+    this->cellSize = CELL_SIZES[cellSizeIndex];
+
+    this->width = 768 / cellSize;
+    this->height = width - 1;
 
     this->cells = new bool[width * height];
     // Creating a copy of the original grid to check for cells before updating them
@@ -18,10 +21,15 @@ Grid::Grid(sf::RenderWindow* window, MouseHandler* mouse, int width, int height)
     init();
 }
 
+Grid::~Grid()
+{
+    delete[] cells, cellsCopy;
+}
+
 void Grid::init()
 {
     // Creating a cell shape object
-    this->cellShape = sf::RectangleShape(sf::Vector2f(CELL_SIZE, CELL_SIZE));
+    this->cellShape = sf::RectangleShape(sf::Vector2f(cellSize, cellSize));
     cellShape.setFillColor(sf::Color::White);
 
     reset();
@@ -33,18 +41,18 @@ void Grid::renderGridOutline()
 {
     sf::RectangleShape line;
     line.setFillColor(sf::Color(128, 128, 128, 255));
-    line.setSize(sf::Vector2f(width * CELL_SIZE, 1));
+    line.setSize(sf::Vector2f(width * cellSize, 1));
 
     for (int y = 0; y <= height; y++) {
-        line.setPosition(sf::Vector2f(0, y * CELL_SIZE));
+        line.setPosition(sf::Vector2f(0, y * cellSize));
 
         window->draw(line);
     }
 
-    line.setSize(sf::Vector2f(1, height * CELL_SIZE));
+    line.setSize(sf::Vector2f(1, height * cellSize));
 
     for (int x = 0; x <= width; x++) {
-        line.setPosition(sf::Vector2f(x * CELL_SIZE, 0));
+        line.setPosition(sf::Vector2f(x * cellSize, 0));
 
         window->draw(line);
     }
@@ -74,14 +82,14 @@ void Grid::transferNewCells()
 
 void Grid::checkUserInput()
 {
-    if (!mouse->isAnyButtonPressed()) return;
+    if (!mouse->isAnyButtonPressed() || !WindowUtils::isWindowFocused()) return;
 
     int mx = mouse->getX();
     int my = mouse->getY();
 
     // Getting the cell x and y
-    int cellX = mx / CELL_SIZE;
-    int cellY = my / CELL_SIZE;
+    int cellX = mx / cellSize;
+    int cellY = my / cellSize;
 
     if (mouse->isLeftPressed()) {
         setCell(cellX, cellY, true);
@@ -91,6 +99,51 @@ void Grid::checkUserInput()
         setCell(cellX, cellY, false);
         setCopiedCell(cellX, cellY, false);
     }
+}
+
+void Grid::updateDimensions(int cellSize)
+{
+    int oldWidth = this->width;
+    int oldHeight = this->height;
+
+    // Updating the dimensions
+    this->cellSize = cellSize;
+    this->width = 768 / cellSize;
+    this->height = width - 1;
+
+    this->cellShape.setSize(sf::Vector2f(cellSize, cellSize));
+
+    // New grid with a different cell size
+    bool* newArray = new bool[width * height];
+    bool* newArrayCopy = new bool[width * height];
+
+    for (unsigned i = 0; i < width * height; i++) {
+        newArray[i] = false;
+        newArrayCopy[i] = false;
+    }
+
+    for (int y = 0; y < oldHeight; y++) {
+        for (int x = 0; x < oldWidth; x++) {
+            if (x >= width || y >= height) continue;
+
+            bool oldCell = cells[x + y * oldWidth];
+            bool oldCellCopy = cellsCopy[x + y * oldWidth];
+
+            newArray[x + y * width] = oldCell;
+            newArrayCopy[x + y * width] = oldCellCopy;
+        }
+    }
+
+    // Copying the arrays
+    this->cells = new bool[width * height];
+    this->cellsCopy = new bool[width * height];
+
+    for (int i = 0; i < width * height; i++) {
+        cells[i] = newArray[i];
+        cellsCopy[i] = newArrayCopy[i];
+    }
+
+    delete[] newArray, newArrayCopy;
 }
 
 // Creates the cell in the copy array before updating the entire grid
@@ -141,6 +194,25 @@ bool Grid::isPaused()
 unsigned Grid::getGeneration()
 {
     return generationCount;
+}
+
+int Grid::getCellSize()
+{
+    return cellSize;
+}
+
+void Grid::increaseCellSize()
+{
+    if (cellSizeIndex == NUMBER_OF_SIZES - 1) return;
+    cellSizeIndex++;
+    this->updateDimensions(CELL_SIZES[cellSizeIndex]);
+}
+
+void Grid::decreaseCellSize()
+{
+    if (cellSizeIndex == 0) return;
+    cellSizeIndex--;
+    this->updateDimensions(CELL_SIZES[cellSizeIndex]);
 }
 
 void Grid::reset()
@@ -196,7 +268,7 @@ void Grid::render()
             bool cell = getCopiedCell(x, y);
 
             if (cell) { // Draw the cell if it's alive
-                cellShape.setPosition(sf::Vector2f(x * CELL_SIZE, y * CELL_SIZE));
+                cellShape.setPosition(sf::Vector2f(x * cellSize, y * cellSize));
                 window->draw(cellShape);
             } // Otherwise, it will just be a black cell
         }

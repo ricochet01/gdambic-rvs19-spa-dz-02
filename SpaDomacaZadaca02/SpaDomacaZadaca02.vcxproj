@@ -120,6 +120,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="btn\TextButton.cpp" />
+    <ClCompile Include="WindowUtils.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="ui\Label.cpp" />
     <ClCompile Include="MouseHandler.cpp" />
@@ -128,6 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="btn\TextButton.h" />
+    <ClInclude Include="WindowUtils.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="ui\Label.h" />
     <ClInclude Include="MouseHandler.h" />

@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "Grid.h"
+#include "WindowUtils.h"
 #include "MouseHandler.h"
 #include "btn/TextButton.h"
 #include "btn/SpriteButton.h"
@@ -16,8 +17,8 @@ const int HEIGHT = 768;
 const int MAX_FPS = 60;
 
 // Grid dimensions (in number of cells)
-const int GRID_WIDTH = 32;
-const int GRID_HEIGHT = 30;
+// int GRID_WIDTH = 48;
+// int GRID_HEIGHT = 47;
 
 // Window title
 const string TITLE = "Game of Life";
@@ -31,6 +32,11 @@ void setInterval(Label& intervalLabel, int index, Grid& grid) {
 	int interval = INTERVAL_UPDATES[index];
 	intervalLabel.setText("Update: " + to_string(interval) + " ms");
 	grid.setUpdateInterval(interval);
+}
+
+void updateGeneration(Label& genLabel, int gen) {
+	string genText = gen > 1000000 ? "a lot" : to_string(gen);
+	genLabel.setText("Generation: " + to_string(gen));
 }
 
 int main()
@@ -48,15 +54,18 @@ int main()
 	}
 
 	MouseHandler mouse(&window); // User mouse input
-	Grid grid(&window, &mouse, GRID_WIDTH, GRID_HEIGHT); // Creating the grid
+	Grid grid(&window, &mouse); // Creating the grid
 
 	// Buttons to control the flow
 	SpriteButton pause(&window, "gfx/pause.png", WIDTH - 168, 80);
 	SpriteButton resume(&window, "gfx/resume.png", WIDTH - 168, 80);
 	SpriteButton resetGrid(&window, "gfx/reset1.png", WIDTH - 128, 80);
 
-	SpriteButton timeForwards(&window, "gfx/advance-forward.png", WIDTH - 85, 80);
-	SpriteButton timeBackwards(&window, "gfx/advance-backwards.png", WIDTH - 210, 80);
+	SpriteButton cellIncrease(&window, "gfx/plus.png", WIDTH - 95, 80);
+	SpriteButton cellDecrease(&window, "gfx/minus.png", WIDTH - 200, 80);
+
+	SpriteButton timeForwards(&window, "gfx/advance-forward.png", WIDTH - 60, 80);
+	SpriteButton timeBackwards(&window, "gfx/advance-backwards.png", WIDTH - 235, 80);
 
 	int updateIntervalIndex = NUMBER_OF_INTERVALS - 1;
 	unsigned previousGeneration = grid.getGeneration();
@@ -66,7 +75,9 @@ int main()
 	Label genLabel(&window, &font, "Generation: " + to_string(grid.getGeneration()), WIDTH - 250, 135);
 	Label intervalLabel(&window, &font, "Update: " + to_string(INTERVAL_UPDATES[updateIntervalIndex]) + " ms",
 		WIDTH - 250, 165);
-	Label ctrlLabel(&window, &font, "Left click to make\na cell alive,\nright click to\nkill it.", WIDTH - 250, 240);
+
+	string labelText = "------------------\nLeft click to make\na cell alive,\nright click to\nkill it.";
+	Label ctrlLabel(&window, &font, labelText, WIDTH - 250, 240);
 
 	setInterval(intervalLabel, updateIntervalIndex, grid);
 
@@ -85,8 +96,12 @@ int main()
 					mouse.setLeftClick(true);
 				}
 				break;
+			case sf::Event::GainedFocus:
+				WindowUtils::setWindowFocus(true);
+				break;
 			case sf::Event::LostFocus:
-				grid.toggle(true);
+				WindowUtils::setWindowFocus(false);
+				grid.toggle(true); // Pause the simulation
 				break;
 			}
 		}
@@ -106,6 +121,8 @@ int main()
 		timeForwards.render();
 		timeBackwards.render();
 		resetGrid.render();
+		cellDecrease.render();
+		cellIncrease.render();
 
 		/* Button press checks */
 		if (executionBtn->hasPressed(&mouse)) {
@@ -132,10 +149,18 @@ int main()
 			grid.reset();
 		}
 
+		if (cellIncrease.hasPressed(&mouse)) {
+			grid.increaseCellSize();
+		}
+
+		if (cellDecrease.hasPressed(&mouse)) {
+			grid.decreaseCellSize();
+		}
+
 		// Updating the generation display label
 		if (previousGeneration != grid.getGeneration()) {
 			previousGeneration = grid.getGeneration();
-			genLabel.setText("Generation: " + to_string(previousGeneration));
+			updateGeneration(genLabel, previousGeneration);
 		}
 
 		// Drawing the text labels

@@ -5,7 +5,13 @@
 class Grid
 {
 private:
+	static const int NUMBER_OF_SIZES = 3;
+	const int CELL_SIZES[NUMBER_OF_SIZES] = { 16, 24, 32 }; // All possible cell sizes
+
 	int width, height; // Grid dimensions
+	int cellSizeIndex = 2;
+	int cellSize = CELL_SIZES[cellSizeIndex]; // Cell size
+
 	bool* cells; // Array of cells
 	bool* cellsCopy; // Copy of the original cells
 	sf::RenderWindow* window; // Main window
@@ -22,13 +28,13 @@ private:
 	void init();
 	void renderGridOutline();
 	int getNeighborCount(int x, int y);
+
 	void transferNewCells();
 	void checkUserInput();
+	void updateDimensions(int cellSize);
 public:
-	// Grid constants
-	static const int CELL_SIZE = 24; // Cell size
-
-	Grid(sf::RenderWindow* window, MouseHandler* mouse, int width, int height);
+	Grid(sf::RenderWindow* window, MouseHandler* mouse);
+	~Grid();
 	void setCell(int x, int y, bool state);
 	bool getCell(int x, int y);
 
@@ -42,6 +48,9 @@ public:
 	bool isPaused();
 
 	unsigned getGeneration();
+	int getCellSize();
+	void increaseCellSize();
+	void decreaseCellSize();
 
 	void reset();
 	void tick();
